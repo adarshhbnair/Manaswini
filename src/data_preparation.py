@@ -51,6 +51,5 @@ def prepare_datasets():
     
     print("All datasets prepared and saved in ../data/")
 
-    
 if __name__ == "__main__":
     prepare_datasets()
