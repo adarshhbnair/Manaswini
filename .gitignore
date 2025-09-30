@@ -1,0 +1,23 @@
+# Ignore the Python virtual environment folder
+/venv/
+/.venv/
+/torch_env/
+
+# Ignore Python's bytecode cache
+/__pycache__/
+*.pyc
+
+# Ignore large data and model files
+# (These should be downloaded by a script or stored elsewhere, like Git LFS)
+/data/
+/models/
+glove.6B.zip
+glove.6B.100d.txt
+# Ignore IDE and OS-specific files
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
