@@ -65,3 +65,28 @@ def train_emotion_model():
     trainer.save_model(os.path.join("..", "..", "models", "bert_sentiment"))
     tokenizer.save_pretrained(os.path.join("..", "..", "models", "bert_sentiment"))
     print("Emotion model trained and saved.")
+
+def predict_sentiment_emotion(text):
+    model_path = os.path.join("..", "..", "models", "bert_sentiment")
+    if os.path.exists(model_path):
+        tokenizer = BertTokenizer.from_pretrained(model_path)
+        model = BertForSequenceClassification.from_pretrained(model_path)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+        inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=128)
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+        outputs = model(**inputs)
+        pred = torch.argmax(outputs.logits, dim=-1).item()
+        emotion_map = {0: 'sadness', 1: 'joy', 2: 'anger', 3: 'fear', 4: 'love', 5: 'surprise'}
+        emotion = emotion_map[pred]
+        negative_emotions = ['sadness', 'anger', 'fear']
+        sentiment = 'negative' if emotion in negative_emotions else 'positive'
+    else:
+        sentiment_pipe = pipeline("sentiment-analysis")
+        emotion_pipe = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
+        sentiment_res = sentiment_pipe(text)[0]
+        emotion_res = emotion_pipe(text)[0]
+        sentiment = sentiment_res['label'].lower()
+        emotion = emotion_res['label'].lower()
+    
+    return {"sentiment": sentiment, "emotion": emotion}
